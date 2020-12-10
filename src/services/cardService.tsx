@@ -1,4 +1,4 @@
-import instance from '../utils/axios'
+import axios from 'axios'
 import useCards from '../reducers/useCards'
 import statusService from '../services/statusService'
 
@@ -28,7 +28,7 @@ export default class CardService implements ICardService {
   // gets All Cards from Server
   public getCards = ():void => {
     let cards:ServerCard[] = []
-    instance.get('/cards')
+    axios.get('http://localhost:5000/cards')
       .then(res => {
         cards = res.data
         this.dispatcher.addCards(cards.map(card => this.convertServerCard(card))
@@ -38,14 +38,14 @@ export default class CardService implements ICardService {
 
   // Adds a new Cards
   public addCard = (status:CardStatus) =>
-    instance.post('/cards/add', {status: status.value})
+    axios.post('http://localhost:5000/cards/add', {status: status.value})
       .then(res => this.dispatcher.addCard(this.convertServerCard(res.data)))
       .catch(function (error) {
         console.log(error);
       })
 
   private update = (id:string, param:any) =>
-    instance.post('/cards/update/'+id, param)
+    axios.post('http://localhost:5000/cards/update/'+id, param)
         .then(res => {
             console.log(res)
         }).catch(function (error) {
@@ -70,7 +70,7 @@ export default class CardService implements ICardService {
 
   public deleteCard = (id:string) => {
     this.dispatcher.deleteCard(id)
-    instance.delete('/cards/'+id)
+    axios.delete('http://localhost:5000/cards/'+id)
         .then(res => {
             console.log(res)
         }).catch(function (error) {
