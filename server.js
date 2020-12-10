@@ -11,7 +11,7 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
-app.use(express.static('frontend/build'))
+app.use(express.static(__dirname + "/frontend/build"))
 
 const uri = process.env.ATLAS_URI
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true})
