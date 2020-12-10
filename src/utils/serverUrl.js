@@ -7,4 +7,4 @@ const configs = {
   },
 };
 
-module.exports.config = configs[process.env.NODE_ENV];
+// module.exports.config = configs[process.env.NODE_ENV];
