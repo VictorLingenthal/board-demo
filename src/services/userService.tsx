@@ -1,4 +1,4 @@
-import axios from 'axios'
+import instance from '../utils/axios'
 import useUsers from '../reducers/useUsers'
 
 export default class UserService implements IUserService {
@@ -18,21 +18,21 @@ export default class UserService implements IUserService {
 
   // gets All Users from Server
   public getUsers = ():void => {
-    axios.get('http://localhost:5000/users')
+    instance.get('/users')
       .then(res => this.dispatcher.addUsers(this.expandUsers(res.data)))
       .catch(error => console.log(error))
   }
 
   // Adds a new Users
   public addUser = (name:string) =>
-    axios.post('http://localhost:5000/users/add', {name: name})
+    instance.post('/users/add', {name: name})
       .then(res => this.dispatcher.addUser(this.expandUsers([res.data])))
       .catch(function (error) {
         console.log(error)})
 
     // Adds a new Users
     public deleteUser = (id:string) =>
-      id ? axios.delete('http://localhost:5000/users/'+id)
+      id ? instance.delete('/users/'+id)
         .then(res => this.dispatcher.deleteUser(this.expandUsers([res.data])))
         .catch(function (error) {
           console.log(error)})
