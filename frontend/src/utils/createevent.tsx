@@ -5,19 +5,19 @@
  * @property {function(handler: function)} remove Remove an event handler.
  */
 export default function createEvent() {
-  let invokeList = [];
+  let invokeList:any[] = [];
 
-  const event = (...args) => {
+  const event = (...args:any[]) => {
     for (const e of invokeList) {
       e(...args);
     }
   };
 
-  event.add = e => {
+  event.add = (e:any) => {
     invokeList = [...invokeList, e];
   };
 
-  event.remove = e => {
+  event.remove = (e:any) => {
     invokeList = invokeList.filter(c => c !== e);
   };
 

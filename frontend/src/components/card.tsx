@@ -13,6 +13,7 @@ let Card: FC<{
 }> = (props) => {
 
   let [editTitle, setEditTitle] = useState<boolean>(false)
+  let [deletePending, setDeletePending] = useState<boolean>(false)
   let _toggleTitle = () => setEditTitle(!editTitle)
 
   let cardService = props.cardService
@@ -21,12 +22,16 @@ let Card: FC<{
   let _onChangeOwner = (selectedDropdown:any) =>
     cardService.updateOwner(props.model.id, selectedDropdown)
   let _onChangeInput = (e:React.ChangeEvent<HTMLTextAreaElement>) =>
-    cardService.updateTitle(props.model.id, e)
-  let _onDeleteButton = () =>
+    cardService.updateTitle(props.model.id, props.model.title, e.currentTarget.value)
+  let _onDeleteButton = () => {
+    setDeletePending(true)
     cardService.deleteCard(props.model.id)
+      .catch(error => console.log(error))
+      .finally(() => setDeletePending(false))
+  }
 
   return (
-    <div className="card">
+    <div className={`card ${deletePending ? "deletePending" : ""}`}>
 
       <header>
         <Select

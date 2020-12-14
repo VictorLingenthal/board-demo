@@ -1,18 +1,17 @@
 import axios from 'axios'
-import useCards from '../reducers/useCards'
 import statusService from '../services/statusService'
 
 export default class CardService implements ICardService {
 
-  public cards
-  public dispatcher
-  public statusService
+  public statusService:IStatusService
 
-  constructor () {
-    const [cards, dispatcher] = (useCards as any)()
-    this.cards = cards
-    this.dispatcher = dispatcher
+  private dispatcher:any
+  private titleTimeouts:TitleTimeout[]
+
+  constructor (dispatcher:any) {
     this.statusService = new statusService()
+    this.dispatcher = dispatcher
+    this.titleTimeouts = []
   }
 
   // converts the Card from the Server model to the client model
@@ -27,55 +26,60 @@ export default class CardService implements ICardService {
 
   // gets All Cards from Server
   public getCards = ():void => {
-    let cards:ServerCard[] = []
+    console.log('GetCards');
     axios.get('/cards')
-      .then(res => {
-        cards = res.data
-        this.dispatcher.addCards(cards.map(card => this.convertServerCard(card))
-      )})
-      .catch(error => console.log(error))
-  }
+      .then(res =>
+        this.dispatcher.addCards((res.data as ServerCard[])
+        .map(card => this.convertServerCard(card))))
+      .catch(error => console.log(error))}
 
   // Adds a new Cards
-  public addCard = (status:CardStatus) =>
+  public addCard = (status:CardStatus):Promise<void> =>
     axios.post('/cards/add', {status: status.value})
       .then(res => this.dispatcher.addCard(this.convertServerCard(res.data)))
-      .catch(function (error) {
-        console.log(error);
-      })
+      .catch(error => console.log(error))
 
-  private update = (id:string, param:any) =>
+  private update = (id:string, param:any):Promise<void> =>
     axios.post('/cards/update/'+id, param)
-        .then(res => {
-            console.log(res)
-        }).catch(function (error) {
-          console.log(error)
-        })
+      .then(res => console.log(res))
+      .catch(error => console.log(error))
 
-  public updateStatus = (id: string, selectedDropdown:any) => {
+  public updateStatus = (id: string, selectedDropdown:CardStatus):Promise<void> => {
     this.dispatcher.setStatus(id, selectedDropdown)
-    this.update(id, {status: selectedDropdown.value})
+    return this.update(id, {status: selectedDropdown.value})
   }
 
-  public updateOwner = (id: string, selectedDropdown:any) => {
-    var newOwner = selectedDropdown ? selectedDropdown.value : null
-    this.dispatcher.setOwner(id, newOwner)
-    this.update(id, {owner: newOwner})
+  public updateOwner = (id: string, selectedDropdown:any):Promise<void> => {
+    var owner = selectedDropdown ? selectedDropdown.value : null
+    this.dispatcher.setOwner(id, owner)
+    return this.update(id, owner)
   }
 
-  public updateTitle = (id: string, e:React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.dispatcher.setTitle(id, e.currentTarget.value)
-    this.update(id, {title: e.currentTarget.value})
+  public updateTitle = (id: string, oldTitle:string, newTitle:string):any => {
+
+    let timeout = this.titleTimeouts.filter(timeouts => timeouts.id === id)[0]
+    let newTimeout = () => setTimeout(() => {
+      this.titleTimeouts = this.titleTimeouts.filter(timeouts => !(timeouts.id === id))
+      return this.update(id, newTitle)
+    }, 2000)
+
+    if (timeout) {
+      clearTimeout(timeout.timeout)
+      timeout.timeout = newTimeout()
+    } else {
+      let newTitleTimeout = {
+        id, oldTitle,
+        timeout: newTimeout()
+      }
+      this.titleTimeouts = [newTitleTimeout, ...this.titleTimeouts]
+    }
+
+    this.dispatcher.setTitle(id, newTitle)
   }
 
-  public deleteCard = (id:string) => {
-    this.dispatcher.deleteCard(id)
+  public deleteCard = (id:string):Promise<void> =>
     axios.delete('/cards/'+id)
-        .then(res => {
-            console.log(res)
-        }).catch(function (error) {
-          console.log(error)
-        })
-  }
+      .then(() => this.dispatcher.deleteCard(id))
+      .catch(error => console.log(error))
 
 }

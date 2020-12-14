@@ -1,14 +1,10 @@
 import axios from 'axios'
-import useUsers from '../reducers/useUsers'
 
 export default class UserService implements IUserService {
 
-  public users
-  public dispatcher
+  public dispatcher:any
 
-  constructor () {
-    const [userArray, dispatcher] = (useUsers as any)()
-    this.users = userArray
+  constructor (dispatcher:any) {
     this.dispatcher = dispatcher
   }
 
@@ -17,25 +13,24 @@ export default class UserService implements IUserService {
     u.map(i => ({value:i.name, label:i.name, id: i._id}))
 
   // gets All Users from Server
-  public getUsers = ():void => {
+  public getUsers = ():any =>
     axios.get('/users')
       .then(res => this.dispatcher.addUsers(this.expandUsers(res.data)))
       .catch(error => console.log(error))
-  }
 
   // Adds a new Users
-  public addUser = (name:string) =>
-    axios.post('/users/add', {name: name})
+  public addUser = (name:string):Promise<any> =>
+    axios.post('/users/add', {name})
       .then(res => this.dispatcher.addUser(this.expandUsers([res.data])))
       .catch(function (error) {
         console.log(error)})
 
-    // Adds a new Users
-    public deleteUser = (id:string) =>
-      id ? axios.delete('/users/'+id)
-        .then(res => this.dispatcher.deleteUser(this.expandUsers([res.data])))
-        .catch(function (error) {
-          console.log(error)})
-          : null
+  // Deletes a User
+  public deleteUser = (id:string):Promise<void>|null =>
+    id ? axios.delete('/users/'+id)
+      .then(res => this.dispatcher.deleteUser(id))
+      .catch(function (error) {
+        console.log(error)})
+        : null
 
 }

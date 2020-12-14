@@ -1,15 +1,15 @@
 import globalReducer from "./globalreducer";
 
-export const reducer = {
+export const reducer:IUserReducer = {
 
   // Create a new user
-  addUser: (state:User[], user:User) => [user, ...state],
+  addUser: (state:User[], user:User):User[] => [user, ...state],
 
   // Add a user Array
-  addUsers: (state:User[], users:User[]) => [...users, ...state],
+  addUsers: (state:User[], users:User[]):User[] => [...users, ...state],
 
   // Delete a user by id
-  deleteUser: (state:User[], id:string) => state.filter(i => i.id !== id),
+  deleteUser: (state:User[], id:string):User[] => state.filter(i => i.id !== id),
 
 };
 

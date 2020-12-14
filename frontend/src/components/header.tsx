@@ -6,6 +6,7 @@ import Select from 'react-select'
 
 let Header: FC<{
   userService:IUserService
+  users:User[]
 }> = (props) => {
 
   let userService = props.userService
@@ -21,7 +22,7 @@ let Header: FC<{
 
   let _onChangeInput = (e:React.ChangeEvent<HTMLInputElement>) => setUserInput(e.currentTarget.value)
   let _onChangeUser = (selectedDropdown:any) => setUserDropdown(selectedDropdown)
-  let _onClickDeleteUser = () => userService.deleteUser(userDropdown ? userDropdown.id : null)
+  let _onClickDeleteUser = () => userService.deleteUser(userDropdown ? userDropdown.id : '')
 
   return (
     <header className="boardHeader">
@@ -32,7 +33,7 @@ let Header: FC<{
       <button onClick={_onClickAddUser}>Add User</button>
       <Select
         className="deleteUser"
-        options={userService.users}
+        options={props.users}
         value={userDropdown}
         placeholder="Pick User"
         isClearable={true}

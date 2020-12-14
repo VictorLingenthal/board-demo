@@ -11,18 +11,17 @@ import createEvent from "../utils/createevent";
  * @return {function(selector: function = undefined, onComponentStateChanged: function = undefined): [Object, Object]}
  */
 export default function globalReducer(
-  initialValue,
-  reducer,
-  onStateChange = undefined
+  initialValue:any[],
+  reducer:any,
+  onStateChange:any = undefined
 ) {
   let state = initialValue;
   const onChange = createEvent();
 
-
   const dispatch = Object.keys(reducer).reduce(
     (p, c) => ({
       ...p,
-      [c]: (...params) => {
+      [c]: (...params:any[]) => {
         const newState = reducer[c](state, ...params);
 
         if (state !== newState) {
@@ -38,14 +37,13 @@ export default function globalReducer(
     {}
   );
 
-  return (selector = undefined, onComponentStateChanged = undefined) => {
+  return (selector:any = undefined, onComponentStateChanged:any = undefined) => {
     const [componentState, setComponentState] = useState(
       selector ? selector(state) : state
     );
-
     useEffect(
       () => {
-        const onComponentChange = newState => {
+        const onComponentChange = (newState:any[]) => {
           const newComponentState = selector ? selector(newState) : newState;
 
           if (newComponentState !== componentState) {
@@ -65,7 +63,6 @@ export default function globalReducer(
       },
       [componentState]
     );
-
     return [componentState, dispatch];
   };
 }
