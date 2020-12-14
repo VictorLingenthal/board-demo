@@ -8,7 +8,6 @@ router.route('/').get((req, res) => {
 })
 
 router.route('/add').post((req, res) => {
-  console.log(req.body)
 
   const title = req.body.title || ''
   const status = req.body.status || 'todo'

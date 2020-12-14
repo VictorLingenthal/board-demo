@@ -26,7 +26,6 @@ export default class CardService implements ICardService {
 
   // gets All Cards from Server
   public getCards = ():void => {
-    console.log('GetCards');
     axios.get('/cards')
       .then(res =>
         this.dispatcher.addCards((res.data as ServerCard[])
@@ -52,15 +51,15 @@ export default class CardService implements ICardService {
   public updateOwner = (id: string, selectedDropdown:any):Promise<void> => {
     var owner = selectedDropdown ? selectedDropdown.value : null
     this.dispatcher.setOwner(id, owner)
-    return this.update(id, owner)
+    return this.update(id, {owner})
   }
 
-  public updateTitle = (id: string, oldTitle:string, newTitle:string):any => {
+  public updateTitle = (id: string, oldTitle:string, title:string):any => {
 
     let timeout = this.titleTimeouts.filter(timeouts => timeouts.id === id)[0]
     let newTimeout = () => setTimeout(() => {
       this.titleTimeouts = this.titleTimeouts.filter(timeouts => !(timeouts.id === id))
-      return this.update(id, newTitle)
+      return this.update(id, {title})
     }, 2000)
 
     if (timeout) {
@@ -74,7 +73,7 @@ export default class CardService implements ICardService {
       this.titleTimeouts = [newTitleTimeout, ...this.titleTimeouts]
     }
 
-    this.dispatcher.setTitle(id, newTitle)
+    this.dispatcher.setTitle(id, title)
   }
 
   public deleteCard = (id:string):Promise<void> =>
