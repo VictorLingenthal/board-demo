@@ -59,6 +59,11 @@ interface IUserService {
   addUser(name:string):Promise<string>
   deleteUser(id:string):Promise<void>|null
 }
+interface IUserServiceConst {
+  getUsers(addUsers:Function):Promise<any>
+  addUser(addUser:Function, name:string):Promise<string>
+  deleteUser(deleteUser:Function, id:string):Promise<void>|null
+}
 
 interface IStatusService {
   statusTypes: CardStatus[]

@@ -5,24 +5,22 @@ import useCards from '../reducers/useCards'
 import useUsers from '../reducers/useUsers'
 
 import CardService from '../services/cardService'
-import UserService from '../services/userService'
+import { userService } from '../services/userServiceConst'
 
 import Header from './header'
 import Column from './column'
 
-var cardService:CardService
-var userService:UserService
+var cardService:ICardService
 
 let Board: FC = () => {
 
   const [cards, cardDispatcher]:[cards:Card[], dispatcher:ICardDispatcher] = (useCards as any)()
-  const [users, userDispatcher]:[User[], IUserDispatcher] = (useUsers as any)()
+  const [users, { addUsers }]:[User[], IUserDispatcher] = (useUsers as any)()
 
   useEffect(() => {
     cardService = new CardService(cardDispatcher)
-    userService = new UserService(userDispatcher)
     cardService.getCards()
-    userService.getUsers()
+    userService.getUsers(addUsers)
   },[])
 
   let Columns = cardService ? cardService.statusService.statusTypes.map((status =>
@@ -37,11 +35,7 @@ let Board: FC = () => {
 
   return (
     <div className="board">
-      {userService &&
-        <Header
-          users={users}
-          userService={userService}
-      />}
+      <Header/>
       <main className="boardmain">
         {Columns}
       </main>
