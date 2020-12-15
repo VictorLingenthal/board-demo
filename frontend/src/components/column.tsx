@@ -1,7 +1,11 @@
 import React, { FC } from 'react'
 import './column.scss'
 
-import Card from './card'
+import CardComp from './card'
+import { CardStatus } from '../services/statusService'
+import { Card } from '../reducers/useCards'
+import { User } from '../reducers/useUsers'
+import { ICardService } from '../services/cardService'
 
 let Column: FC<{
   status:CardStatus
@@ -23,12 +27,12 @@ let Column: FC<{
         {props.cards.filter(
           card => card.status.value === props.status.value).map((
             cardModel =>
-              <Card
+              <CardComp
                 key={cardModel.id}
                 model={cardModel}
                 cardService={props.cardService}
                 users={props.users}
-              ></Card>
+              ></CardComp>
         ))}
       </main>
     </div>

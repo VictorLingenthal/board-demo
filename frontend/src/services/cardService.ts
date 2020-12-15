@@ -1,15 +1,39 @@
+
 import axios from 'axios'
-import statusService from '../services/statusService'
+import statusService, { CardStatus, CardStatusValue } from '../services/statusService'
+import { Card } from '../reducers/useCards'
+import { User } from '../reducers/useUsers'
+
+type ServerCard = {
+  _id: string
+  title: string
+  status: CardStatusValue
+  owner: string | null
+  creator: string
+  date: Date
+}
+
+export interface ICardService {
+  addCard(status:CardStatus):Promise<any>
+  getCards():void
+  updateStatus(id:string, status:CardStatus):Promise<void>
+  updateOwner(id:string, owner:User):Promise<void>
+  updateTitle(id:string, oldtitle:string, newtitle:string):Promise<void>
+  deleteCard(id:string):Promise<void>
+}
+
+type TitleTimeout = {
+  id: string
+  oldTitle: string
+  timeout: any
+}
 
 export default class CardService implements ICardService {
-
-  public statusService:IStatusService
 
   private dispatcher:any
   private titleTimeouts:TitleTimeout[]
 
   constructor (dispatcher:any) {
-    this.statusService = new statusService()
     this.dispatcher = dispatcher
     this.titleTimeouts = []
   }
@@ -18,7 +42,7 @@ export default class CardService implements ICardService {
   private convertServerCard = (card:ServerCard):Card => ({
       id: card._id,
       title: card.title,
-      status: this.statusService.getStatusByValue(card.status),
+      status: statusService.getInstance().getStatusByValue(card.status),
       owner: card.owner,
       creator: card.creator,
       date: card.date

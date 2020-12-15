@@ -1,5 +1,34 @@
 import globalReducer from "./globalreducer"
 
+import { CardStatus } from '../services/statusService'
+
+export type Card = {
+  id: string
+  title: string
+  status: CardStatus
+  owner: string | null
+  creator: string
+  date: Date
+}
+
+interface ICardReducer {
+  deleteCard(state:Card[], id:string):void
+  addCard(state:Card[], card:Card):Card[]
+  addCards(state:Card[], cards:Card[]):Card[]
+  setStatus(state:Card[], id:string, status:CardStatus):Card[]
+  setTitle(state:Card[], id:string, title:string):Card[]
+  setOwner(state:Card[], id:string, owner:string):Card[]
+}
+
+export interface ICardDispatcher {
+  deleteCard(id:string):void
+  addCard(card:Card):void
+  addCards(cards:Card[]):void
+  setStatus(id:string, status:CardStatus):void
+  setTitle(id:string, title:string):void
+  setOwner(id:string, owner:string):void
+}
+
 export const reducer:ICardReducer = {
   // Delete a card by id
   deleteCard: (state:Card[], id:string) => state.filter(i => i.id !== id),

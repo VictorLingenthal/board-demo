@@ -4,9 +4,12 @@ import './card.scss'
 
 import Select from 'react-select'
 import TextareaAutosize from 'react-textarea-autosize'
+import statusService from '../services/statusService'
+import { ICardService } from '../services/cardService'
+import { Card } from '../reducers/useCards'
 import capitalize from "../utils/utils"
 
-let Card: FC<{
+let CardComp: FC<{
   model:Card
   cardService:ICardService
   users:Object[]
@@ -47,7 +50,7 @@ let Card: FC<{
         />
         <Select
           className="selectStatus"
-          options={cardService.statusService.statusTypes}
+          options={statusService.getInstance().statusTypes}
           value={props.model.status}
           placeholder="Status"
           onChange={_onChangeStatus}
@@ -82,4 +85,4 @@ let Card: FC<{
 }
 
 
-export default Card
+export default CardComp

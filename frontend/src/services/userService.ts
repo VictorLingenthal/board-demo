@@ -1,5 +1,18 @@
 import axios from 'axios'
 
+import { User, IUserDispatcher } from '../reducers/useUsers'
+
+type ServerUser = {
+  _id: string
+  name: string
+}
+
+interface IUserService {
+  dispatcher: IUserDispatcher
+  getUsers():Promise<any>
+  addUser(name:string):Promise<string>
+  deleteUser(id:string):Promise<void>|null
+}
 
 export default class UserService implements IUserService {
 

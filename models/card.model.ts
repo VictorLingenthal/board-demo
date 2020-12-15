@@ -1,6 +1,12 @@
-import mongoose from 'mongoose'
+import { model, Schema, Document, Model } from 'mongoose'
 
-const Schema = mongoose.Schema
+export interface ICard extends Document {
+  title: string
+  status: string
+  owner: string
+  creator: string
+  date: Date
+}
 
 const cardSchema = new Schema({
   title: { type: String },
@@ -12,6 +18,6 @@ const cardSchema = new Schema({
   timestamps: true
 })
 
-const Card = mongoose.model('Card', cardSchema)
+const Card: Model<ICard> = model('Card', cardSchema)
 
-module.exports = Card
+export default Card

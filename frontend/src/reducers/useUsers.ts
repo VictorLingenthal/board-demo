@@ -1,5 +1,17 @@
 import globalReducer from "./globalreducer";
 
+export type User = {
+  value: string
+  label: string
+  id: string
+}
+
+interface IUserReducer {
+  addUser(state:User[],user:User):User[]
+  addUsers(state:User[], users:User[]):User[]
+  deleteUser(state:User[], id:string):User[]
+}
+
 export const reducer:IUserReducer = {
 
   // Create a new user
@@ -12,6 +24,12 @@ export const reducer:IUserReducer = {
   deleteUser: (state:User[], id:string):User[] => state.filter(i => i.id !== id),
 
 };
+
+export interface IUserDispatcher {
+  addUser(user:User[]):void
+  addUsers(users:User[]):void
+  deleteUser(id:string):void
+}
 
 export default globalReducer(
   // Load users from local storage

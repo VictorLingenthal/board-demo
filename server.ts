@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express'
+import express, { Application, Request } from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 
@@ -8,7 +8,7 @@ const app: Application = express()
 
 const port = process.env.PORT || 5000
 
-app.use(cors<any>())
+app.use(cors<Request>())
 app.use(express.json())
 
 app.use(express.static(__dirname + "/frontend/build"))
@@ -21,8 +21,8 @@ connection.once('open', () => {
   console.log("MongoDB database connection established successfully")
 })
 
-const cardRouter = require('./routes/cards')
-const usersRouter = require('./routes/users')
+import cardRouter from './routes/cards'
+import usersRouter from './routes/users'
 
 app.use('/cards', cardRouter)
 app.use('/users', usersRouter)

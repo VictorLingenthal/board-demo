@@ -1,5 +1,18 @@
 import axios from 'axios'
 
+import { User } from '../reducers/useUsers'
+
+type ServerUser = {
+  _id: string
+  name: string
+}
+
+interface IUserServiceConst {
+  getUsers(addUsers:Function):Promise<any>
+  addUser(addUser:Function, name:string):Promise<string>
+  deleteUser(deleteUser:Function, id:string):Promise<void>|null
+}
+
   // converts users into format for the dropdown
 const expandUsers = (u:ServerUser[]):User[] =>
   u.map(i => ({value:i.name, label:i.name, id: i._id}))

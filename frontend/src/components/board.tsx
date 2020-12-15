@@ -1,11 +1,12 @@
 import React, { FC, useEffect } from 'react';
 import './board.scss';
 
-import useCards from '../reducers/useCards'
-import useUsers from '../reducers/useUsers'
+import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
+import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
-import CardService from '../services/cardService'
+import CardService, { ICardService } from '../services/cardService'
 import { userService } from '../services/userServiceConst'
+import StatusService, { CardStatus } from '../services/statusService'
 
 import Header from './header'
 import Column from './column'
@@ -23,7 +24,7 @@ let Board: FC = () => {
     userService.getUsers(addUsers)
   },[])
 
-  let Columns = cardService ? cardService.statusService.statusTypes.map((status =>
+  let Columns = StatusService.getInstance().statusTypes.map(((status:CardStatus) =>
     <Column
       key={status.label}
       status={status}
@@ -31,7 +32,7 @@ let Board: FC = () => {
       cards={cards}
       cardService={cardService}
     ></Column>
-  )) : 'Loading'
+  ))
 
   return (
     <div className="board">
