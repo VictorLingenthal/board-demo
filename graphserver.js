@@ -35,6 +35,7 @@ mongoose_1.default
         resolvers: resolvers
     });
     var app = express_1.default();
+    app.use(express_1.default.static(__dirname + "/frontend/build"));
     server.applyMiddleware({ app: app });
     var httpServer = http_1.createServer(app);
     var PORT = process.env.PORT || 4444;

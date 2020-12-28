@@ -52,6 +52,8 @@ mongoose
       resolvers
     });
     const app = express();
+    app.use(express.static(__dirname + "/frontend/build"))
+
     server.applyMiddleware({ app });
     const httpServer = createServer(app);
 
