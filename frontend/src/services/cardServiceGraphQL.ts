@@ -42,6 +42,7 @@ export default class CardService implements ICardService {
 
   // converts the Card from the Server model to the client model
   private convertServerCard = (card:ServerCard|any):Card => {
+    console.log('ConvertCard')
     return {
       id: card._id ? card._id : card.id,
       title: card.title,
