@@ -27,6 +27,7 @@ router.route('/add').post((req, res) => {
 router.route('/:id').get((req,res) => {
   CardModel.findById(req.params.id)
     .then((card:any) => res.json(card))
+    // .then((card:ICard|null) => res.json(card))
     .catch((err:string) => res.status(400).json('Error: ' + err))
 })
 

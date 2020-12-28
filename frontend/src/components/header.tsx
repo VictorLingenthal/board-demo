@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { userService } from '../services/userServiceConst'
+import { userService } from '../services/userServiceGraphQL'
 import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
 import './header.scss'

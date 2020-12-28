@@ -5,7 +5,7 @@ import CardComp from './card'
 import { CardStatus } from '../services/statusService'
 import { Card } from '../reducers/useCards'
 import { User } from '../reducers/useUsers'
-import { ICardService } from '../services/cardService'
+import { ICardService } from '../services/cardServiceGraphQL'
 
 let Column: FC<{
   status:CardStatus
