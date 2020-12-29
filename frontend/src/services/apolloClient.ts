@@ -6,5 +6,4 @@ export const apolloClient = new ApolloClient({
     addTypename: false
   }),
   uri: process.env.GRAPHQL_URL || 'http://localhost:4444/graphql',
-  // uri: '/graphql',
 });
