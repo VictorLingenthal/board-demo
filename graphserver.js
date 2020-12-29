@@ -15,6 +15,8 @@ var http_1 = require("http");
 var dotenv_1 = __importDefault(require("dotenv"));
 var user_1 = require("./graphql/user");
 var card_1 = require("./graphql/card");
+console.log("Server");
+console.log(process.env);
 dotenv_1.default.config();
 var typeDefs = apollo_server_express_1.gql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n  type Query {\n    name: String\n  }\n\n  type Mutation {\n    addName(name:String):String\n  }\n\n  ", "\n  ", "\n\n"], ["\n\n  type Query {\n    name: String\n  }\n\n  type Mutation {\n    addName(name:String):String\n  }\n\n  ", "\n  ", "\n\n"])), user_1.userDefs, card_1.cardDefs);
 var initResolvers = {

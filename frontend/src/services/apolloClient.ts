@@ -1,6 +1,9 @@
 
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
+console.log("Client")
+console.log(process.env)
+
 export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     addTypename: false

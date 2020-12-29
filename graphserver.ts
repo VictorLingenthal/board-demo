@@ -8,6 +8,9 @@ import dotenv from "dotenv"
 import { userDefs, userResolvers } from './graphql/user'
 import { cardDefs, cardResolvers } from './graphql/card'
 
+console.log("Server")
+console.log(process.env)
+
 dotenv.config();
 
 const typeDefs = gql`
