@@ -7,7 +7,7 @@ import { apolloClient } from '../services/apolloClient'
 
 
 type ServerCard = {
-  _id: string
+  id: string
   title: string
   status: CardStatusValue
   owner: string | null
@@ -42,9 +42,8 @@ export default class CardService implements ICardService {
 
   // converts the Card from the Server model to the client model
   private convertServerCard = (card:ServerCard|any):Card => {
-    console.log('ConvertCard')
     return {
-      id: card._id ? card._id : card.id,
+      id: card.id,
       title: card.title,
       status: statusService.getInstance().getStatusByValue(card.status),
       owner: card.owner,
