@@ -77,7 +77,11 @@ exports.cardResolvers = {
                         date = Date.parse(args.date) || Date.now();
                         newCard = new card_model_1.default({ title: title, status: status, owner: owner, creator: creator, date: date });
                         return [4 /*yield*/, newCard.save()
-                                .then(function () { return newCard; })
+                                .then(function () {
+                                console.log('newCard');
+                                console.log(newCard);
+                                return newCard;
+                            })
                                 .catch(function (err) { return 'Error ' + err; })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -85,32 +89,32 @@ exports.cardResolvers = {
         }); },
         deleteCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                card_model_1.default.findByIdAndDelete(args.id)
-                    .then(function () { return 'Card deleted.'; })
-                    .catch(function (err) { return "Error: " + err; });
-                return [2 /*return*/];
+                return [2 /*return*/, card_model_1.default.findByIdAndDelete(args.id)
+                        .then(function () { return 'Card deleted.'; })
+                        .catch(function (err) { return "Error: " + err; })];
             });
         }); },
         updateCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                card_model_1.default.findById(args.id)
-                    .then(function (card) {
-                    if (card) {
-                        card.title = args.card.title || card.title;
-                        card.status = args.card.status || card.status;
-                        card.owner = args.card.owner || card.owner;
-                        card.creator = args.card.creator || card.creator;
-                        card.date = args.card.date || card.date;
-                        // card.date = Date.parse(args.card.date) || card.date
-                        card.save()
-                            .then(function () { return card; })
-                            .catch(function (err) { return "Error: " + err; });
-                    }
-                    else
-                        return 'There was no card with this id';
-                })
-                    .catch(function (err) { return "Error: " + err; });
-                return [2 /*return*/];
+                return [2 /*return*/, card_model_1.default.findById(args.id)
+                        .then(function (card) {
+                        if (card) {
+                            card.title = args.card.title || card.title;
+                            card.status = args.card.status || card.status;
+                            card.owner = args.card.owner || card.owner;
+                            card.creator = args.card.creator || card.creator;
+                            card.date = args.card.date || card.date;
+                            // card.date = Date.parse(args.card.date) || card.date
+                            return card.save()
+                                .then(function () {
+                                return card;
+                            })
+                                .catch(function (err) { return "Error: " + err; });
+                        }
+                        else
+                            return 'There was no card with this id';
+                    })
+                        .catch(function (err) { return "Error: " + err; })];
             });
         }); }
     }

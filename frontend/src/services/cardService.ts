@@ -41,7 +41,7 @@ export default class CardService implements ICardService {
   }
 
   // converts the Card from the Server model to the client model
-  private convertServerCard = (card:ServerCard|any):Card => {
+  private convertServerCard = (card:ServerCard):Card => {
     return {
       id: card.id,
       title: card.title,
@@ -94,6 +94,7 @@ export default class CardService implements ICardService {
     }
 
   private update = (id:string, param:any):Promise<void> => {
+    console.log(id)
     return apolloClient.mutate({
       variables: {id, card: param},
       mutation: gql`
@@ -109,7 +110,7 @@ export default class CardService implements ICardService {
         }`,
     })
     .then(res => {
-      return this.dispatcher.addCard(this.convertServerCard(res.data.addCard))
+      return this.dispatcher.addCard(this.convertServerCard(res.data.updateCard))
     })
     .catch(error => console.log("Error: " + error))
   }

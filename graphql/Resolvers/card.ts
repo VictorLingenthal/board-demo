@@ -21,16 +21,20 @@ export const cardResolvers = {
         const newCard:ICard = new Card({ title, status, owner, creator, date })
 
         return await newCard.save()
-          .then(() => newCard)
+          .then(() => {
+            console.log('newCard')
+            console.log(newCard)
+            return newCard
+          })
           .catch((err:string) => 'Error ' + err)
     },
     deleteCard: async (__:any, args:any) => {
-      Card.findByIdAndDelete(args.id)
+      return Card.findByIdAndDelete(args.id)
         .then(() => 'Card deleted.')
         .catch((err:string) => `Error: ${err}`)
     },
     updateCard: async (__:any, args:any) => {
-      Card.findById(args.id)
+      return Card.findById(args.id)
         .then((card:ICard|null) => {
           if (card) {
           card.title = args.card.title || card.title
@@ -39,8 +43,10 @@ export const cardResolvers = {
           card.creator = args.card.creator || card.creator
           card.date = args.card.date || card.date
           // card.date = Date.parse(args.card.date) || card.date
-          card.save()
-            .then(() => card)
+          return card.save()
+            .then(() => {
+              return card
+            })
             .catch((err:string) => `Error: ${err}`)
           } else return 'There was no card with this id'
         })
