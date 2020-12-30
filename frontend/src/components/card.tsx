@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react'
 
-import './card.scss'
+import './scss/card.scss'
 
 import Select from 'react-select'
 import TextareaAutosize from 'react-textarea-autosize'
 import statusService from '../services/statusService'
-import { ICardService } from '../services/cardServiceGraphQL'
+import { ICardService } from '../services/cardService'
 import { Card } from '../reducers/useCards'
 import capitalize from "../utils/utils"
 

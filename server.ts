@@ -1,32 +1,37 @@
-import express, { Application, Request } from 'express'
-import cors from 'cors'
-import mongoose from 'mongoose'
+import express from 'express'
+import { ApolloServer, gql } from 'apollo-server-express'
 
-require('dotenv').config()
+import mongoose from "mongoose"
+import { createServer } from "http"
+import dotenv from "dotenv"
 
-const app: Application = express()
+import { typeDefs } from './graphql/typeDefs'
+import { resolvers } from './graphql/resolvers'
 
-const port = process.env.PORT || 3000
+dotenv.config();
 
-app.use(cors<Request>())
-app.use(express.json())
+mongoose
+  .connect(
+    (process.env.ATLAS_URI)as any,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => {
+    console.log("mongodb connected successfully");
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers
+    });
+    const app = express();
+    app.use(express.static(__dirname + "/frontend/build"))
 
-app.use(express.static(__dirname + "/frontend/build"))
+    server.applyMiddleware({ app });
+    const httpServer = createServer(app);
 
-const uri:any = process.env.ATLAS_URI
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true})
-
-const connection = mongoose.connection
-connection.once('open', () => {
-  console.log("MongoDB database connection established successfully")
-})
-
-import cardRouter from './routes/cards'
-import usersRouter from './routes/users'
-
-app.use('/cards', cardRouter)
-app.use('/users', usersRouter)
-
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`)
-})
+    const PORT = process.env.PORT || 4444;
+    httpServer.listen({ port: PORT }, () => {
+      console.log(`Server is running in port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

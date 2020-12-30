@@ -1,11 +1,11 @@
 import React, { FC, useEffect } from 'react';
-import './board.scss';
+import './scss/board.scss';
 
 import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
 import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
-import CardService, { ICardService } from '../services/cardServiceGraphQL'
-import { userService } from '../services/userServiceGraphQL'
+import CardService, { ICardService } from '../services/cardService'
+import { userService } from '../services/userService'
 import StatusService, { CardStatus } from '../services/statusService'
 
 import Header from './header'

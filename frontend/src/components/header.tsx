@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 
-import { userService } from '../services/userServiceGraphQL'
+import { userService } from '../services/userService'
 import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
-import './header.scss'
+import './scss/header.scss'
 
 import Select from 'react-select'
 

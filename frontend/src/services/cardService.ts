@@ -1,11 +1,13 @@
-
-import axios from 'axios'
 import statusService, { CardStatus, CardStatusValue } from '../services/statusService'
 import { Card } from '../reducers/useCards'
 import { User } from '../reducers/useUsers'
 
+import { gql } from '@apollo/client';
+import { apolloClient } from '../services/apolloClient'
+
+
 type ServerCard = {
-  _id: string
+  id: string
   title: string
   status: CardStatusValue
   owner: string | null
@@ -39,33 +41,79 @@ export default class CardService implements ICardService {
   }
 
   // converts the Card from the Server model to the client model
-  private convertServerCard = (card:ServerCard):Card => ({
-      id: card._id,
+  private convertServerCard = (card:ServerCard|any):Card => {
+    return {
+      id: card.id,
       title: card.title,
       status: statusService.getInstance().getStatusByValue(card.status),
       owner: card.owner,
       creator: card.creator,
       date: card.date
-    })
+    }
+  }
 
   // gets All Cards from Server
-  public getCards = ():void => {
-    axios.get('/cards')
+  public getCards = ():Promise<any> =>
+    apolloClient.query({
+        query: gql`{
+            cards {
+              title
+              id
+              status
+              owner
+              creator
+              date
+            }
+          }`,
+      })
       .then(res =>
-        this.dispatcher.addCards((res.data as ServerCard[])
+        this.dispatcher.addCards((res.data.cards as ServerCard[])
         .map(card => this.convertServerCard(card))))
-      .catch(error => console.log(error))}
+      .catch(error => console.log(error))
 
   // Adds a new Cards
-  public addCard = (status:CardStatus):Promise<void> =>
-    axios.post('/cards/add', {status: status.value})
-      .then(res => this.dispatcher.addCard(this.convertServerCard(res.data)))
-      .catch(error => console.log(error))
+  public addCard = (status:CardStatus):Promise<void> => {
+    return apolloClient.mutate({
+        variables: {status: status.value},
+        mutation: gql`
+          mutation AddCard($status: String) {
+            addCard(status: $status) {
+              title
+              id
+              status
+              owner
+              creator
+              date
+            }
+          }`,
+      })
+      .then(res => {
+        return this.dispatcher.addCard(this.convertServerCard(res.data.addCard))
+      })
+      .catch(error => console.log("Error: " + error))
+    }
 
-  private update = (id:string, param:any):Promise<void> =>
-    axios.post('/cards/update/'+id, param)
-      .then(res => console.log(res))
-      .catch(error => console.log(error))
+  private update = (id:string, param:any):Promise<void> => {
+    return apolloClient.mutate({
+      variables: {id, card: param},
+      mutation: gql`
+        mutation UpdateCard($id: ID, $card:CardInput) {
+          updateCard(id: $id, card:$card) {
+            title
+            id
+            status
+            owner
+            creator
+            date
+          }
+        }`,
+    })
+    .then(res => {
+      return this.dispatcher.addCard(this.convertServerCard(res.data.addCard))
+    })
+    .catch(error => console.log("Error: " + error))
+  }
+
 
   public updateStatus = (id: string, selectedDropdown:CardStatus):Promise<void> => {
     this.dispatcher.setStatus(id, selectedDropdown)
@@ -101,8 +149,14 @@ export default class CardService implements ICardService {
   }
 
   public deleteCard = (id:string):Promise<void> =>
-    axios.delete('/cards/'+id)
-      .then(() => this.dispatcher.deleteCard(id))
-      .catch(error => console.log(error))
+    apolloClient.mutate({
+      variables: {id},
+      mutation: gql`
+        mutation DeleteCard($id: ID) {
+          deleteCard(id: $id)
+        }`,
+    })
+    .then(() => this.dispatcher.deleteCard(id))
+    .catch(error => console.log(error))
 
 }

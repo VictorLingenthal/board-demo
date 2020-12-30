@@ -1,50 +1,63 @@
-import axios from 'axios'
+import { User } from '../reducers/useUsers'
 
-import { User, IUserDispatcher } from '../reducers/useUsers'
+import { gql } from '@apollo/client';
+import { apolloClient } from '../services/apolloClient'
 
 type ServerUser = {
-  _id: string
+  id: string
   name: string
 }
 
-interface IUserService {
-  dispatcher: IUserDispatcher
-  getUsers():Promise<any>
-  addUser(name:string):Promise<string>
-  deleteUser(id:string):Promise<void>|null
+interface IUserServiceConst {
+  getUsers(addUsers:Function):Promise<any>
+  addUser(addUser:Function, name:string):Promise<string>
+  deleteUser(deleteUser:Function, id:string):Promise<void>|null
 }
 
-export default class UserService implements IUserService {
+// converts users into format for the dropdown
+const expandUsers = (u:ServerUser[]):User[] =>
+  u.map(i => ({value:i.name, label:i.name, id: i.id}))
 
-  public dispatcher:any
-
-  constructor (dispatcher:any) {
-    this.dispatcher = dispatcher
-  }
-
-  // converts users into format for the dropdown
-  private expandUsers = (u:ServerUser[]):User[] =>
-    u.map(i => ({value:i.name, label:i.name, id: i._id}))
+export const userService:IUserServiceConst  = {
 
   // gets All Users from Server
-  public getUsers = ():Promise<void> =>
-    axios.get('/users')
-      .then(res => this.dispatcher.addUsers(this.expandUsers(res.data)))
-      .catch(error => console.log(error))
+  getUsers : (addUsers:Function):Promise<void> =>
+    apolloClient.query({
+      query: gql`{
+          users {
+            name
+            id
+          }
+        }`,
+    })
+    .then(res => addUsers(expandUsers(res.data.users)))
+    .catch(err => console.log(err)),
 
   // Adds a new Users
-  public addUser = (name:string):Promise<any> =>
-    axios.post('/users/add', {name})
-      .then(res => this.dispatcher.addUser(this.expandUsers([res.data])))
-      .catch(function (error) {
-        console.log(error)})
+  addUser : (addUser:Function, name:string):Promise<any> =>
+    apolloClient.mutate({
+      variables: {name},
+      mutation: gql`
+        mutation AddUser($name: String) {
+          addUser(name: $name) {
+            id
+            name
+          }
+        }`,
+    })
+    .then(res => addUser(expandUsers([res.data.addUser])))
+    .catch(err => console.log(err)),
 
   // Deletes a User
-  public deleteUser = (id:string):Promise<void>|null =>
-    id ? axios.delete('/users/'+id)
-      .then(res => this.dispatcher.deleteUser(id))
-      .catch(function (error) {
-        console.log(error)})
-        : null
+  deleteUser : (deleteUser:Function, id:string):Promise<void>|null =>
+    id ? apolloClient.mutate({
+        variables: {id},
+        mutation: gql`
+          mutation DeleteUser($id: ID) {
+            deleteUser(id: $id)
+          }`,
+      })
+      .then(res => deleteUser(id))
+      .catch(err => console.log(err)) : null
 
 }

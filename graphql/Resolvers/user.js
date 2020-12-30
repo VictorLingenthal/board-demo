@@ -1,8 +1,4 @@
 "use strict";
-var __makeTemplateObject = (this && this.__makeTemplateObject) || function (cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -43,10 +39,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userResolvers = exports.userDefs = void 0;
-var apollo_server_express_1 = require("apollo-server-express");
-var user_model_1 = __importDefault(require("../models/user.model"));
-exports.userDefs = apollo_server_express_1.gql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n\n  type User {\n    name: String!\n    id: ID\n  }\n\n  extend type Query {\n    users: [User]\n    user(id:ID): User\n  }\n\n  extend type Mutation {\n    addUser(name:String):User\n    deleteUser(id:ID):Boolean\n  }\n\n"], ["\n\n  type User {\n    name: String!\n    id: ID\n  }\n\n  extend type Query {\n    users: [User]\n    user(id:ID): User\n  }\n\n  extend type Mutation {\n    addUser(name:String):User\n    deleteUser(id:ID):Boolean\n  }\n\n"])));
+exports.userResolvers = void 0;
+var user_model_1 = __importDefault(require("../../models/user.model"));
 exports.userResolvers = {
     Query: {
         user: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
@@ -96,4 +90,3 @@ exports.userResolvers = {
         }); },
     }
 };
-var templateObject_1;
