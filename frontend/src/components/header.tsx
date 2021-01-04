@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 
-import { userService } from '../services/userService'
+import { UserService } from '../services/userService'
 import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
 import './scss/header.scss'
@@ -16,13 +16,13 @@ let Header: FC = () => {
 
   let _onClickAddUser = () => {
     if (userInput)
-      userService.addUser(addUser, userInput)
+      UserService.getInstance().addUser(addUser, userInput)
     setUserInput('')
   }
 
   let _onChangeInput = (e:React.ChangeEvent<HTMLInputElement>) => setUserInput(e.currentTarget.value)
   let _onChangeUser = (selectedDropdown:any) => setUserDropdown(selectedDropdown)
-  let _onClickDeleteUser = () => userService.deleteUser(deleteUser,userDropdown ? userDropdown.id : '')
+  let _onClickDeleteUser = () => UserService.getInstance().deleteUser(deleteUser,userDropdown ? userDropdown.id : '')
 
   return (
     <header className="boardHeader">

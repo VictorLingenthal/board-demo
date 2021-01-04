@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express');
 const { apolloClient, connectToDb, dropTestDb, closeDbConnection } = require('./testSetup');
 const { ObjectId } = require('mongodb');
 
-// const { userService } = require('../frontend/src/services/userService')
+const { UserService } = require('../frontend/src/services/userService')
 const { CardService } = require('../frontend/src/services/cardService')
 
 beforeAll(async () => {
@@ -32,42 +32,44 @@ test('Resolver working', async () => {
   expect(res.data.name).toEqual('Peter')
 })
 
-// test('Test getUsers', async () => {
-//   expect.assertions(1)
-//
-//   const getUsers = await userService.getUsers((res:any) => res)
-//   expect(getUsers).toEqual([])
-//
-// })
-//
-// test('Test addUser', async () => {
-//   expect.assertions(1)
-//
-//   const addUser = await userService.addUser((res:any) => res,'Testname')
-//   expect(addUser[0].value).toEqual('Testname')
-//
-// })
-//
-// test('Test deleteUser', async () => {
-//   expect.assertions(3)
-//
-//   const getUsers2 = await userService.getUsers((res:any) => res)
-//   expect(getUsers2.length).toBe(1)
-//   expect(getUsers2[0].value).toEqual('Testname')
-//
-//
-//   const deleteUser = await userService.deleteUser((res:any) => res,getUsers2[0].id)
-//   expect(deleteUser).toEqual(getUsers2[0].id)
-//
-// })
-//
-// test('Test getUsers3', async () => {
-//   expect.assertions(1)
-//
-//   const getUsers3 = await userService.getUsers((res:any) => res)
-//   expect(getUsers3).toEqual([])
-//
-// })
+var userService = UserService.getInstance(apolloClient)
+
+test('Test getUsers', async () => {
+  expect.assertions(1)
+
+  const getUsers = await userService.getUsers((res:any) => res)
+  expect(getUsers).toEqual([])
+
+})
+
+test('Test addUser', async () => {
+  expect.assertions(1)
+
+  const addUser = await userService.addUser((res:any) => res,'Testname')
+  expect(addUser[0].value).toEqual('Testname')
+
+})
+
+test('Test deleteUser', async () => {
+  expect.assertions(3)
+
+  const getUsers2 = await userService.getUsers((res:any) => res)
+  expect(getUsers2.length).toBe(1)
+  expect(getUsers2[0].value).toEqual('Testname')
+
+
+  const deleteUser = await userService.deleteUser((res:any) => res,getUsers2[0].id)
+  expect(deleteUser).toEqual(getUsers2[0].id)
+
+})
+
+test('Test getUsers3', async () => {
+  expect.assertions(1)
+
+  const getUsers3 = await userService.getUsers((res:any) => res)
+  expect(getUsers3).toEqual([])
+
+})
 
 const dispatcher = {
   addCard: (a:any) => a,

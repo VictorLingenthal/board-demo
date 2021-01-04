@@ -1,15 +1,14 @@
 import { User } from '../reducers/useUsers'
-
 import { gql } from '@apollo/client';
 
-import { apolloClient } from '../services/apolloClient'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 type ServerUser = {
   id: string
   name: string
 }
 
-interface IUserServiceConst {
+export interface IUserService {
   getUsers(addUsers:Function):Promise<any>
   addUser(addUser:Function, name:string):Promise<string>
   deleteUser(deleteUser:Function, id:string):Promise<void>|null
@@ -19,11 +18,27 @@ interface IUserServiceConst {
 const expandUsers = (u:ServerUser[]):User[] =>
   u.map(i => ({value:i.name, label:i.name, id: i.id}))
 
-export const userService:IUserServiceConst  = {
+
+export class UserService implements IUserService {
+
+  private static instance:IUserService
+  apolloClient:ApolloClient<NormalizedCacheObject>
+
+  private constructor (apolloClient:ApolloClient<NormalizedCacheObject>) {
+    this.apolloClient = apolloClient
+  }
+
+  public static getInstance(apolloClient?: ApolloClient<NormalizedCacheObject>): IUserService {
+    if (!UserService.instance && apolloClient) {
+        UserService.instance = new UserService(apolloClient)
+    }
+
+    return UserService.instance;
+  }
 
   // gets All Users from Server
-  getUsers : (addUsers:Function):Promise<void> =>
-    apolloClient.query({
+  public getUsers = (addUsers:Function):Promise<void> =>
+    this.apolloClient.query({
       query: gql`{
           users {
             name
@@ -32,11 +47,11 @@ export const userService:IUserServiceConst  = {
         }`,
     })
     .then(res => addUsers(expandUsers(res.data.users)))
-    .catch(err => console.log(err)),
+    .catch(err => console.log(err))
 
   // Adds a new Users
-  addUser : (addUser:Function, name:string):Promise<any> =>
-    apolloClient.mutate({
+  public addUser = (addUser:Function, name:string):Promise<any> =>
+    this.apolloClient.mutate({
       variables: {name},
       mutation: gql`
         mutation AddUser($name: String) {
@@ -47,11 +62,11 @@ export const userService:IUserServiceConst  = {
         }`,
     })
     .then(res => addUser(expandUsers([res.data.addUser])))
-    .catch(err => console.log(err)),
+    .catch(err => console.log(err))
 
   // Deletes a User
-  deleteUser : (deleteUser:Function, id:string):Promise<void>|null =>
-    id ? apolloClient.mutate({
+  public deleteUser = (deleteUser:Function, id:string):Promise<void>|null =>
+    id ? this.apolloClient.mutate({
         variables: {id},
         mutation: gql`
           mutation DeleteUser($id: ID) {
