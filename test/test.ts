@@ -71,22 +71,13 @@ test('Test getUsers3', async () => {
 
 })
 
-const dispatcher = {
-  addCard: (a:any) => a,
-  addCards: (a:any) => a,
-  deleteCard: (a:any) => a,
-  setStatus: (a:any) => a,
-  setTitle: (a:any) => a,
-  setOwner: (a:any) => a,
-}
-
-const cardService = CardService.getInstance(dispatcher, apolloClient)
+const cardService = CardService.getInstance(apolloClient)
 
 test('Test getCards', async () => {
 
 expect.assertions(1)
 
-  const getCards = await cardService.getCards()
+  const getCards = await cardService.getCards((res:any) => res)
   expect(getCards).toEqual([])
 
 })
@@ -95,7 +86,7 @@ test('Test addCard', async () => {
 
   expect.assertions(1)
 
-  const addCard = await cardService.addCard({status:'todo'})
+  const addCard = await cardService.addCard((res:any) => res, {status:'todo'})
   expect(addCard.status.value).toEqual('todo')
 
 })
@@ -104,11 +95,11 @@ test('Test deleteCard', async () => {
 
   expect.assertions(3)
 
-  const getCards2 = await cardService.getCards()
+  const getCards2 = await cardService.getCards((res:any) => res)
   expect(getCards2.length).toEqual(1)
   expect(getCards2[0].status.value).toEqual('todo')
 
-  const deleteCard = await cardService.deleteCard(getCards2[0].id)
+  const deleteCard = await cardService.deleteCard((res:any) => res, getCards2[0].id)
   expect(deleteCard).toEqual(getCards2[0].id)
 
   })
@@ -117,7 +108,7 @@ test('Test getCards3', async () => {
 
   expect.assertions(1)
 
-  const getCards3 = await cardService.getCards()
+  const getCards3 = await cardService.getCards((res:any) => res)
   expect(getCards3).toEqual([])
 
 })

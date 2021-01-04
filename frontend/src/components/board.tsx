@@ -17,12 +17,12 @@ var userService:IUserService
 
 let Board: FC = () => {
 
-  const [cards, cardDispatcher]:[cards:Card[], dispatcher:ICardDispatcher] = (useCards as any)()
+  const [cards, { addCards }]:[Card[], ICardDispatcher] = (useCards as any)()
   const [users, { addUsers }]:[User[], IUserDispatcher] = (useUsers as any)()
 
   useEffect(() => {
-    cardService = CardService.getInstance(cardDispatcher, apolloClient)
-    cardService.getCards()
+    cardService = CardService.getInstance(apolloClient)
+    cardService.getCards(addCards)
     userService = UserService.getInstance(apolloClient)
     userService.getUsers(addUsers)
   },[])
@@ -32,8 +32,6 @@ let Board: FC = () => {
       key={status.label}
       status={status}
       users={users}
-      cards={cards}
-      cardService={cardService}
     ></Column>
   ))
 

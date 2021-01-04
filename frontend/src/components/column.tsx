@@ -3,19 +3,18 @@ import './scss/column.scss'
 
 import CardComp from './card'
 import { CardStatus } from '../services/statusService'
-import { Card } from '../reducers/useCards'
+import useCards, { Card, ICardDispatcher} from '../reducers/useCards'
 import { User } from '../reducers/useUsers'
-import { ICardService } from '../services/cardService'
+import { CardService, ICardService } from '../services/cardService'
 
 let Column: FC<{
   status:CardStatus
   users:User[]
-  cards:Card[]
-  cardService:ICardService
 }> = (props) => {
 
-  let _onClick = () =>
-    props.cardService.addCard(props.status)
+const [cards, { addCard }]:[Card[], ICardDispatcher] = (useCards as any)()
+
+  let _onClick = () => CardService.getInstance().addCard(addCard, props.status)
 
   return (
     <div className="column">
@@ -24,13 +23,12 @@ let Column: FC<{
         <button onClick={_onClick}>+</button>
       </header>
       <main className="columnMain">
-        {props.cards.filter(
+        {cards.filter(
           card => card.status.value === props.status.value).map((
             cardModel =>
               <CardComp
                 key={cardModel.id}
                 model={cardModel}
-                cardService={props.cardService}
                 users={props.users}
               ></CardComp>
         ))}

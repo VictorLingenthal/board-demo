@@ -28,7 +28,7 @@ export class UserService implements IUserService {
     this.apolloClient = apolloClient
   }
 
-  public static getInstance(apolloClient?: ApolloClient<NormalizedCacheObject>): IUserService {
+  public static getInstance = (apolloClient?: ApolloClient<NormalizedCacheObject>):IUserService => {
     if (!UserService.instance && apolloClient) {
         UserService.instance = new UserService(apolloClient)
     }

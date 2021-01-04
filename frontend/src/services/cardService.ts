@@ -5,7 +5,6 @@ import { User } from '../reducers/useUsers'
 import { gql } from '@apollo/client';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-
 type ServerCard = {
   id: string
   title: string
@@ -16,12 +15,12 @@ type ServerCard = {
 }
 
 export interface ICardService {
-  addCard(status:CardStatus):Promise<any>
-  getCards():void
-  updateStatus(id:string, status:CardStatus):Promise<void>
-  updateOwner(id:string, owner:User):Promise<void>
-  updateTitle(id:string, oldtitle:string, newtitle:string):Promise<void>
-  deleteCard(id:string):Promise<void>
+  addCard(addCard:Function, status:CardStatus):Promise<any>
+  getCards(addCard:Function):void
+  updateStatus(setTatus:Function, id:string, status:CardStatus):Promise<void>
+  updateOwner(setOwner:Function, id:string, owner:User):Promise<void>
+  updateTitle(setTitle:Function, id:string, oldtitle:string, newtitle:string):Promise<void>
+  deleteCard(deleteCard:Function, id:string):Promise<void>
 }
 
 type TitleTimeout = {
@@ -34,19 +33,17 @@ export class CardService implements ICardService {
 
   private static instance:ICardService
 
-  private dispatcher:any
   private titleTimeouts:TitleTimeout[]
   private apolloClient:ApolloClient<NormalizedCacheObject>
 
-  private constructor (dispatcher:any, apolloClient:ApolloClient<NormalizedCacheObject>) {
-    this.dispatcher = dispatcher
+  private constructor (apolloClient:ApolloClient<NormalizedCacheObject>) {
     this.apolloClient = apolloClient
     this.titleTimeouts = []
   }
 
-  public static getInstance(dispatcher?: ICardDispatcher, apolloClient?: ApolloClient<NormalizedCacheObject>): ICardService {
+  public static getInstance = (apolloClient?: ApolloClient<NormalizedCacheObject>): ICardService => {
     if (!CardService.instance && apolloClient) {
-        CardService.instance = new CardService(dispatcher, apolloClient)
+        CardService.instance = new CardService(apolloClient)
     }
 
     return CardService.instance;
@@ -65,7 +62,7 @@ export class CardService implements ICardService {
   }
 
   // gets All Cards from Server
-  public getCards = ():Promise<any> =>
+  public getCards = (addCards:Function):Promise<any> =>
     this.apolloClient.query({
         query: gql`{
             cards {
@@ -78,13 +75,12 @@ export class CardService implements ICardService {
             }
           }`,
       })
-      .then(res =>
-        this.dispatcher.addCards((res.data.cards as ServerCard[])
+      .then(res => addCards((res.data.cards as ServerCard[])
         .map(card => this.convertServerCard(card))))
       .catch(error => console.log(error))
 
   // Adds a new Cards
-  public addCard = (status:CardStatus):Promise<void> => {
+  public addCard = (addCard:Function, status:CardStatus):Promise<void> => {
     return this.apolloClient.mutate({
         variables: {status: status.value},
         mutation: gql`
@@ -99,9 +95,7 @@ export class CardService implements ICardService {
             }
           }`,
       })
-      .then(res => {
-        return this.dispatcher.addCard(this.convertServerCard(res.data.addCard))
-      })
+      .then(res => addCard(this.convertServerCard(res.data.addCard)))
       .catch(error => console.log("Error: " + error))
     }
 
@@ -127,18 +121,18 @@ export class CardService implements ICardService {
   }
 
 
-  public updateStatus = (id: string, selectedDropdown:CardStatus):Promise<void> => {
-    this.dispatcher.setStatus(id, selectedDropdown)
+  public updateStatus = (setStatus:Function, id: string, selectedDropdown:CardStatus):Promise<void> => {
+    setStatus(id, selectedDropdown)
     return this.update(id, {status: selectedDropdown.value})
   }
 
-  public updateOwner = (id: string, selectedDropdown:any):Promise<void> => {
+  public updateOwner = (setOwner:Function, id: string, selectedDropdown:any):Promise<void> => {
     var owner = selectedDropdown ? selectedDropdown.value : null
-    this.dispatcher.setOwner(id, owner)
+    setOwner(id, owner)
     return this.update(id, {owner})
   }
 
-  public updateTitle = (id: string, oldTitle:string, title:string):any => {
+  public updateTitle = (setTitle:Function, id:string, oldTitle:string, title:string):any => {
 
     let timeout = this.titleTimeouts.filter(timeouts => timeouts.id === id)[0]
     let newTimeout = () => setTimeout(() => {
@@ -157,10 +151,10 @@ export class CardService implements ICardService {
       this.titleTimeouts = [newTitleTimeout, ...this.titleTimeouts]
     }
 
-    this.dispatcher.setTitle(id, title)
+    setTitle(id, title)
   }
 
-  public deleteCard = (id:string):Promise<void> =>
+  public deleteCard = (deleteCard:Function ,id:string):Promise<void> =>
     this.apolloClient.mutate({
       variables: {id},
       mutation: gql`
@@ -168,7 +162,7 @@ export class CardService implements ICardService {
           deleteCard(id: $id)
         }`,
     })
-    .then(() => this.dispatcher.deleteCard(id))
+    .then(() => deleteCard(id))
     .catch(error => console.log(error))
 
 }

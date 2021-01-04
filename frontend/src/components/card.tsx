@@ -5,30 +5,31 @@ import './scss/card.scss'
 import Select from 'react-select'
 import TextareaAutosize from 'react-textarea-autosize'
 import statusService from '../services/statusService'
-import { ICardService } from '../services/cardService'
-import { Card } from '../reducers/useCards'
+import { CardService, ICardService } from '../services/cardService'
+import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
 import capitalize from "../utils/utils"
 
 let CardComp: FC<{
   model:Card
-  cardService:ICardService
   users:Object[]
 }> = (props) => {
+
+  const [cards, { setStatus, setOwner, setTitle, deleteCard }]:[Card[], ICardDispatcher] = (useCards as any)()
 
   let [editTitle, setEditTitle] = useState<boolean>(false)
   let [deletePending, setDeletePending] = useState<boolean>(false)
   let _toggleTitle = () => setEditTitle(!editTitle)
 
-  let cardService = props.cardService
+  let cardService = CardService.getInstance()
   let _onChangeStatus = (selectedDropdown:any) =>
-    cardService.updateStatus(props.model.id, selectedDropdown)
+    cardService.updateStatus(setStatus, props.model.id, selectedDropdown)
   let _onChangeOwner = (selectedDropdown:any) =>
-    cardService.updateOwner(props.model.id, selectedDropdown)
+    cardService.updateOwner(setOwner, props.model.id, selectedDropdown)
   let _onChangeInput = (e:React.ChangeEvent<HTMLTextAreaElement>) =>
-    cardService.updateTitle(props.model.id, props.model.title, e.currentTarget.value)
+    cardService.updateTitle(setTitle, props.model.id, props.model.title, e.currentTarget.value)
   let _onDeleteButton = () => {
     setDeletePending(true)
-    cardService.deleteCard(props.model.id)
+    cardService.deleteCard(deleteCard, props.model.id)
       .catch(error => console.log(error))
       .finally(() => setDeletePending(false))
   }
