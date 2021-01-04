@@ -4,9 +4,10 @@ import './scss/board.scss';
 import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
 import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
-import CardService, { ICardService } from '../services/cardService'
+import { CardService, ICardService } from '../services/cardService'
 import { userService } from '../services/userService'
 import StatusService, { CardStatus } from '../services/statusService'
+import { apolloClient } from '../services/apolloClient'
 
 import Header from './header'
 import Column from './column'
@@ -19,7 +20,7 @@ let Board: FC = () => {
   const [users, { addUsers }]:[User[], IUserDispatcher] = (useUsers as any)()
 
   useEffect(() => {
-    cardService = new CardService(cardDispatcher)
+    cardService = CardService.getInstance(cardDispatcher, apolloClient)
     cardService.getCards()
     userService.getUsers(addUsers)
   },[])

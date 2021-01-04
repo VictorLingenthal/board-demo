@@ -1,6 +1,7 @@
 import { User } from '../reducers/useUsers'
 
 import { gql } from '@apollo/client';
+
 import { apolloClient } from '../services/apolloClient'
 
 type ServerUser = {

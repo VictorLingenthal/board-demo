@@ -1,9 +1,9 @@
 import statusService, { CardStatus, CardStatusValue } from '../services/statusService'
-import { Card } from '../reducers/useCards'
+import { Card, ICardDispatcher } from '../reducers/useCards'
 import { User } from '../reducers/useUsers'
 
 import { gql } from '@apollo/client';
-import { apolloClient } from '../services/apolloClient'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 
 type ServerCard = {
@@ -30,14 +30,26 @@ type TitleTimeout = {
   timeout: any
 }
 
-export default class CardService implements ICardService {
+export class CardService implements ICardService {
+
+  private static instance:ICardService
 
   private dispatcher:any
   private titleTimeouts:TitleTimeout[]
+  private apolloClient:ApolloClient<NormalizedCacheObject>
 
-  constructor (dispatcher:any) {
+  private constructor (dispatcher:any, apolloClient:ApolloClient<NormalizedCacheObject>) {
     this.dispatcher = dispatcher
+    this.apolloClient = apolloClient
     this.titleTimeouts = []
+  }
+
+  public static getInstance(dispatcher?: ICardDispatcher, apolloClient?: ApolloClient<NormalizedCacheObject>): ICardService {
+    if (!CardService.instance && apolloClient) {
+        CardService.instance = new CardService(dispatcher, apolloClient)
+    }
+
+    return CardService.instance;
   }
 
   // converts the Card from the Server model to the client model
@@ -54,7 +66,7 @@ export default class CardService implements ICardService {
 
   // gets All Cards from Server
   public getCards = ():Promise<any> =>
-    apolloClient.query({
+    this.apolloClient.query({
         query: gql`{
             cards {
               title
@@ -73,7 +85,7 @@ export default class CardService implements ICardService {
 
   // Adds a new Cards
   public addCard = (status:CardStatus):Promise<void> => {
-    return apolloClient.mutate({
+    return this.apolloClient.mutate({
         variables: {status: status.value},
         mutation: gql`
           mutation AddCard($status: String) {
@@ -94,8 +106,7 @@ export default class CardService implements ICardService {
     }
 
   private update = (id:string, param:any):Promise<void> => {
-    console.log(id)
-    return apolloClient.mutate({
+    return this.apolloClient.mutate({
       variables: {id, card: param},
       mutation: gql`
         mutation UpdateCard($id: ID, $card:CardInput) {
@@ -110,7 +121,7 @@ export default class CardService implements ICardService {
         }`,
     })
     .then(res => {
-      return this.dispatcher.addCard(this.convertServerCard(res.data.updateCard))
+      // return this.dispatcher.addCard(this.convertServerCard(res.data.updateCard))
     })
     .catch(error => console.log("Error: " + error))
   }
@@ -150,7 +161,7 @@ export default class CardService implements ICardService {
   }
 
   public deleteCard = (id:string):Promise<void> =>
-    apolloClient.mutate({
+    this.apolloClient.mutate({
       variables: {id},
       mutation: gql`
         mutation DeleteCard($id: ID) {

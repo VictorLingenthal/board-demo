@@ -21,11 +21,7 @@ export const cardResolvers = {
         const newCard:ICard = new Card({ title, status, owner, creator, date })
 
         return await newCard.save()
-          .then(() => {
-            console.log('newCard')
-            console.log(newCard)
-            return newCard
-          })
+          .then(() => newCard)
           .catch((err:string) => 'Error ' + err)
     },
     deleteCard: async (__:any, args:any) => {

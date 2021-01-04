@@ -77,11 +77,7 @@ exports.cardResolvers = {
                         date = Date.parse(args.date) || Date.now();
                         newCard = new card_model_1.default({ title: title, status: status, owner: owner, creator: creator, date: date });
                         return [4 /*yield*/, newCard.save()
-                                .then(function () {
-                                console.log('newCard');
-                                console.log(newCard);
-                                return newCard;
-                            })
+                                .then(function () { return newCard; })
                                 .catch(function (err) { return 'Error ' + err; })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
