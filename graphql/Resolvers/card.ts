@@ -2,12 +2,8 @@ import Card, { ICard } from '../../models/card.model'
 
 export const cardResolvers = {
   Query: {
-    cards: async () => await Card.find()
-      .then((cards:ICard[]) => cards)
-      .catch((err) => console.log('Error: ' + err)),
+    cards: async () => await Card.find(),
     card: async (id:string) => await Card.findById(id)
-      .then((card:ICard|null) => card)
-      .catch((err) => console.log('Error: ' + err))
   },
   Mutation : {
     addCard: async (__:any, args:any) => {
@@ -21,32 +17,19 @@ export const cardResolvers = {
         const newCard:ICard = new Card({ title, status, owner, creator, date })
 
         return await newCard.save()
-          .then(() => newCard)
-          .catch((err:string) => 'Error ' + err)
     },
-    deleteCard: async (__:any, args:any) => {
-      return Card.findByIdAndDelete(args.id)
-        .then(() => 'Card deleted.')
-        .catch((err:string) => `Error: ${err}`)
-    },
+    deleteCard: async (__:any, args:any) => await Card.findByIdAndDelete(args.id),
     updateCard: async (__:any, args:any) => {
-      return Card.findById(args.id)
-        .then((card:ICard|null) => {
-          if (card) {
-          card.title = args.card.title || card.title
-          card.status = args.card.status || card.status
-          card.owner = args.card.owner || card.owner
-          card.creator = args.card.creator || card.creator
-          card.date = args.card.date || card.date
-          // card.date = Date.parse(args.card.date) || card.date
-          return card.save()
-            .then(() => {
-              return card
-            })
-            .catch((err:string) => `Error: ${err}`)
-          } else return 'There was no card with this id'
-        })
-        .catch((err:string) => `Error: ${err}`)
+      const card = await Card.findById(args.id)
+      if (card) {
+        card.title = args.card.title || card.title
+        card.status = args.card.status || card.status
+        card.owner = args.card.owner || card.owner
+        card.creator = args.card.creator || card.creator
+        card.date = args.card.date || card.date
+        // card.date = Date.parse(args.card.date) || card.date
+        return await card.save()
+      } else return 'There was no card with this id'
     }
   }
 }

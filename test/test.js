@@ -42,8 +42,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var gql = require('apollo-server-express').gql;
 var _a = require('./testSetup'), apolloClient = _a.apolloClient, connectToDb = _a.connectToDb, dropTestDb = _a.dropTestDb, closeDbConnection = _a.closeDbConnection;
 var ObjectId = require('mongodb').ObjectId;
-var userService = require('../frontend/src/services/userService').userService;
-var CardService = require('../frontend/src/services/cardService');
+var UserService = require('../frontend/src/services/userService').UserService;
+var CardService = require('../frontend/src/services/cardService').CardService;
 beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -89,6 +89,7 @@ test('Resolver working', function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); });
+var userService = UserService.getInstance(apolloClient);
 test('Test getUsers', function () { return __awaiter(void 0, void 0, void 0, function () {
     var getUsers;
     return __generator(this, function (_a) {
@@ -104,32 +105,48 @@ test('Test getUsers', function () { return __awaiter(void 0, void 0, void 0, fun
     });
 }); });
 test('Test addUser', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var addUser;
+    var addUser, noUser, nullUser;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                expect.assertions(1);
+                expect.assertions(3);
                 return [4 /*yield*/, userService.addUser(function (res) { return res; }, 'Testname')];
             case 1:
                 addUser = _a.sent();
                 expect(addUser[0].value).toEqual('Testname');
+                return [4 /*yield*/, userService.addUser(function (res) { return res; }, '')];
+            case 2:
+                noUser = _a.sent();
+                expect(noUser).toEqual(undefined);
+                return [4 /*yield*/, userService.addUser(function (res) { return res; })];
+            case 3:
+                nullUser = _a.sent();
+                expect(nullUser).toEqual(undefined);
                 return [2 /*return*/];
         }
     });
 }); });
 test('Test deleteUser', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var getUsers2, deleteUser;
+    var getUsers2, deleteUserFail, deleteUserFail2, deleteUser;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                expect.assertions(3);
+                expect.assertions(5);
                 return [4 /*yield*/, userService.getUsers(function (res) { return res; })];
             case 1:
                 getUsers2 = _a.sent();
                 expect(getUsers2.length).toBe(1);
                 expect(getUsers2[0].value).toEqual('Testname');
-                return [4 /*yield*/, userService.deleteUser(function (res) { return res; }, getUsers2[0].id)];
+                return [4 /*yield*/, userService.deleteUser(function (res) { return res; }, '')];
             case 2:
+                deleteUserFail = _a.sent();
+                expect(deleteUserFail).toBe(null);
+                return [4 /*yield*/, userService.deleteUser(function (res) { return res; })];
+            case 3:
+                deleteUserFail2 = _a.sent();
+                expect(deleteUserFail2).toBe(null);
+                return [4 /*yield*/, userService.deleteUser(function (res) { return res; }, getUsers2[0].id)];
+            case 4:
                 deleteUser = _a.sent();
                 expect(deleteUser).toEqual(getUsers2[0].id);
                 return [2 /*return*/];
@@ -150,22 +167,14 @@ test('Test getUsers3', function () { return __awaiter(void 0, void 0, void 0, fu
         }
     });
 }); });
-var dispatcher = {
-    addCard: function (a) { return a; },
-    addCards: function (a) { return a; },
-    deleteCard: function (a) { return a; },
-    setStatus: function (a) { return a; },
-    setTitle: function (a) { return a; },
-    setOwner: function (a) { return a; },
-};
-var cardService = new CardService.default(dispatcher);
+var cardService = CardService.getInstance(apolloClient);
 test('Test getCards', function () { return __awaiter(void 0, void 0, void 0, function () {
     var getCards;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 expect.assertions(1);
-                return [4 /*yield*/, cardService.getCards()];
+                return [4 /*yield*/, cardService.getCards(function (res) { return res; })];
             case 1:
                 getCards = _a.sent();
                 expect(getCards).toEqual([]);
@@ -179,7 +188,7 @@ test('Test addCard', function () { return __awaiter(void 0, void 0, void 0, func
         switch (_a.label) {
             case 0:
                 expect.assertions(1);
-                return [4 /*yield*/, cardService.addCard({ status: 'todo' })];
+                return [4 /*yield*/, cardService.addCard(function (res) { return res; }, { status: 'todo' })];
             case 1:
                 addCard = _a.sent();
                 expect(addCard.status.value).toEqual('todo');
@@ -188,18 +197,22 @@ test('Test addCard', function () { return __awaiter(void 0, void 0, void 0, func
     });
 }); });
 test('Test deleteCard', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var getCards2, deleteCard;
+    var getCards2, deleteCardFail, deleteCard;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                expect.assertions(3);
-                return [4 /*yield*/, cardService.getCards()];
+                expect.assertions(4);
+                return [4 /*yield*/, cardService.getCards(function (res) { return res; })];
             case 1:
                 getCards2 = _a.sent();
                 expect(getCards2.length).toEqual(1);
                 expect(getCards2[0].status.value).toEqual('todo');
-                return [4 /*yield*/, cardService.deleteCard(getCards2[0].id)];
+                return [4 /*yield*/, cardService.deleteCard(function (res) { return res; }, '')];
             case 2:
+                deleteCardFail = _a.sent();
+                expect(deleteCardFail).toEqual("");
+                return [4 /*yield*/, cardService.deleteCard(function (res) { return res; }, getCards2[0].id)];
+            case 3:
                 deleteCard = _a.sent();
                 expect(deleteCard).toEqual(getCards2[0].id);
                 return [2 /*return*/];
@@ -212,7 +225,7 @@ test('Test getCards3', function () { return __awaiter(void 0, void 0, void 0, fu
         switch (_a.label) {
             case 0:
                 expect.assertions(1);
-                return [4 /*yield*/, cardService.getCards()];
+                return [4 /*yield*/, cardService.getCards(function (res) { return res; })];
             case 1:
                 getCards3 = _a.sent();
                 expect(getCards3).toEqual([]);

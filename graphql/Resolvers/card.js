@@ -43,26 +43,18 @@ exports.cardResolvers = void 0;
 var card_model_1 = __importDefault(require("../../models/card.model"));
 exports.cardResolvers = {
     Query: {
-        cards: function () { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, card_model_1.default.find()
-                            .then(function (cards) { return cards; })
-                            .catch(function (err) { return console.log('Error: ' + err); })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); },
-        card: function (id) { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, card_model_1.default.findById(id)
-                            .then(function (card) { return card; })
-                            .catch(function (err) { return console.log('Error: ' + err); })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); }
+        cards: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, card_model_1.default.find()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); },
+        card: function (id) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, card_model_1.default.findById(id)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); }
     },
     Mutation: {
         addCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
@@ -76,41 +68,36 @@ exports.cardResolvers = {
                         creator = args.creator || 'victor';
                         date = Date.parse(args.date) || Date.now();
                         newCard = new card_model_1.default({ title: title, status: status, owner: owner, creator: creator, date: date });
-                        return [4 /*yield*/, newCard.save()
-                                .then(function () { return newCard; })
-                                .catch(function (err) { return 'Error ' + err; })];
+                        return [4 /*yield*/, newCard.save()];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         }); },
-        deleteCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, card_model_1.default.findByIdAndDelete(args.id)
-                        .then(function () { return 'Card deleted.'; })
-                        .catch(function (err) { return "Error: " + err; })];
-            });
-        }); },
+        deleteCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, card_model_1.default.findByIdAndDelete(args.id)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); },
         updateCard: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
+            var card;
             return __generator(this, function (_a) {
-                return [2 /*return*/, card_model_1.default.findById(args.id)
-                        .then(function (card) {
-                        if (card) {
-                            card.title = args.card.title || card.title;
-                            card.status = args.card.status || card.status;
-                            card.owner = args.card.owner || card.owner;
-                            card.creator = args.card.creator || card.creator;
-                            card.date = args.card.date || card.date;
-                            // card.date = Date.parse(args.card.date) || card.date
-                            return card.save()
-                                .then(function () {
-                                return card;
-                            })
-                                .catch(function (err) { return "Error: " + err; });
-                        }
-                        else
-                            return 'There was no card with this id';
-                    })
-                        .catch(function (err) { return "Error: " + err; })];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, card_model_1.default.findById(args.id)];
+                    case 1:
+                        card = _a.sent();
+                        if (!card) return [3 /*break*/, 3];
+                        card.title = args.card.title || card.title;
+                        card.status = args.card.status || card.status;
+                        card.owner = args.card.owner || card.owner;
+                        card.creator = args.card.creator || card.creator;
+                        card.date = args.card.date || card.date;
+                        return [4 /*yield*/, card.save()];
+                    case 2: 
+                    // card.date = Date.parse(args.card.date) || card.date
+                    return [2 /*return*/, _a.sent()];
+                    case 3: return [2 /*return*/, 'There was no card with this id'];
+                }
             });
         }); }
     }

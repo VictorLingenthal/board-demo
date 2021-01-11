@@ -43,50 +43,31 @@ exports.userResolvers = void 0;
 var user_model_1 = __importDefault(require("../../models/user.model"));
 exports.userResolvers = {
     Query: {
-        user: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_model_1.default.findById(args.id)
-                            .then(function (user) { return user; })
-                            .catch(function (err) { return 'Error: ' + err; })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); },
-        users: function () { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_model_1.default.find()
-                            .then(function (users) { return users; })
-                            .catch(function (err) { return console.log('Error: ' + err); })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); },
+        user: function (__, args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, user_model_1.default.findById(args.id)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); },
+        users: function () { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, user_model_1.default.find()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); },
     },
     Mutation: {
-        addUser: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
-            var newUser;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        newUser = new user_model_1.default({ name: args.name });
-                        return [4 /*yield*/, newUser.save()
-                                .then(function () { return newUser; })
-                                .catch(function (err) { return 'Error ' + err; })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); },
-        deleteUser: function (__, args) { return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_model_1.default.findByIdAndDelete(args.id)
-                            .then(function () { return true; })
-                            .catch(function (err) { return false; })];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        }); },
+        addUser: function (__, args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new user_model_1.default({ name: args.name }).save()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); },
+        deleteUser: function (__, args) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, user_model_1.default.findByIdAndDelete(args.id)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        }); }); }
     }
 };

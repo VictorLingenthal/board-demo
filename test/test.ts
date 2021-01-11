@@ -43,20 +43,30 @@ test('Test getUsers', async () => {
 })
 
 test('Test addUser', async () => {
-  expect.assertions(1)
+  expect.assertions(3)
 
   const addUser = await userService.addUser((res:any) => res,'Testname')
   expect(addUser[0].value).toEqual('Testname')
 
+  const noUser = await userService.addUser((res:any) => res,'')
+  expect(noUser).toEqual(undefined)
+  const nullUser = await userService.addUser((res:any) => res)
+  expect(nullUser).toEqual(undefined)
+
 })
 
 test('Test deleteUser', async () => {
-  expect.assertions(3)
+  expect.assertions(5)
 
   const getUsers2 = await userService.getUsers((res:any) => res)
   expect(getUsers2.length).toBe(1)
   expect(getUsers2[0].value).toEqual('Testname')
 
+  const deleteUserFail = await userService.deleteUser((res:any) => res,'')
+  expect(deleteUserFail).toBe(null)
+
+  const deleteUserFail2 = await userService.deleteUser((res:any) => res)
+  expect(deleteUserFail2).toBe(null)
 
   const deleteUser = await userService.deleteUser((res:any) => res,getUsers2[0].id)
   expect(deleteUser).toEqual(getUsers2[0].id)
@@ -93,11 +103,14 @@ test('Test addCard', async () => {
 
 test('Test deleteCard', async () => {
 
-  expect.assertions(3)
+  expect.assertions(4)
 
   const getCards2 = await cardService.getCards((res:any) => res)
   expect(getCards2.length).toEqual(1)
   expect(getCards2[0].status.value).toEqual('todo')
+
+  const deleteCardFail = await cardService.deleteCard((res:any) => res, '')
+  expect(deleteCardFail).toEqual("")
 
   const deleteCard = await cardService.deleteCard((res:any) => res, getCards2[0].id)
   expect(deleteCard).toEqual(getCards2[0].id)
