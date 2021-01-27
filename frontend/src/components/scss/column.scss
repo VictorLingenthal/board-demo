@@ -2,11 +2,11 @@
 .column {
   display: flex;
   flex-direction: column;
-  margin: 20px;
+  // margin: 10px;
 
   .columnHeader Button {margin: 0 10px}
   .columnMain {
     flex-direction: column;
-    width: 324px;
+    width: 310px;
   }
 }
