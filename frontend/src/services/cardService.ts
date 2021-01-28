@@ -16,7 +16,7 @@ type ServerCard = {
 
 export interface ICardService {
   addCard(addCard:Function, status:CardStatus):Promise<any>
-  getCards(addCard:Function):void
+  getCards(addCard:Function):Promise<any>
   updateStatus(setTatus:Function, id:string, status:CardStatus):Promise<void>
   updateOwner(setOwner:Function, id:string, owner:User):Promise<void>
   updateTitle(setTitle:Function, id:string, oldtitle:string, newtitle:string):Promise<void>
@@ -75,9 +75,16 @@ export class CardService implements ICardService {
             }
           }`,
       })
-      .then(res => addCards((res.data.cards as ServerCard[])
-        .map(card => this.convertServerCard(card))))
-      .catch(error => console.log(error))
+      .then(res => {
+        addCards((res.data.cards as ServerCard[])
+          .map(card => this.convertServerCard(card)))
+        return true
+      })
+      .catch(error => {
+        console.log(error)
+        return false
+      })
+
 
   // Adds a new Cards
   public addCard = (addCard:Function, status:CardStatus):Promise<void> => {

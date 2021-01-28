@@ -22,7 +22,10 @@ let Board: FC = () => {
 
   useEffect(() => {
     cardService = CardService.getInstance(apolloClient)
-    cardService.getCards(addCards)
+    // cardService.getCards(addCards)
+    console.log(cardService.getCards(addCards)
+      .then((test:any) => console.log('loaded ' + test))
+    )
     userService = UserService.getInstance(apolloClient)
     userService.getUsers(addUsers)
   },[])
