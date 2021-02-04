@@ -2,6 +2,7 @@
 
 A simple Demo of a Trello like Board using NodeJS written with React/Typescript, GraphQL/Apollo and MongoDB.
 
+
 ### Prerequisites
 
 - NodeJS
@@ -27,7 +28,7 @@ go to mongodb.com and create a new project called `board`
 replace `cluster0.fgtd8.mongodb.net` with your cluster,
 which you can find under Clusters/Connect
 
-4) `npm run server`
+4) `npm start`
 5) `cd frontend && npm install && npm build` (optional)
 
 
