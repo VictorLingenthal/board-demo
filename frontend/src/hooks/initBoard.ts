@@ -3,19 +3,24 @@ import { useEffect, useState } from 'react'
 
 import { apolloClient } from '../services/apolloClient'
 
-import { CardService, ICardService } from '../services/cardService'
-import { UserService, IUserService } from '../services/userService'
+import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
+import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 
-var cardService:ICardService
-var userService:IUserService
+import { CardService } from '../services/cardService'
+import { UserService } from '../services/userService'
 
-export const initState = ( addUsers:Function, addCards:Function ) => {
+export const InitBoard = () => {
+
+  const [cards, { addCards }]:[Card[], ICardDispatcher] = (useCards as any)()
+  const [users, { addUsers }]:[User[], IUserDispatcher] = (useUsers as any)()
+
   const [status, setStatus] = useState({loading: true })
 
   useEffect(() => {
-    cardService = CardService.getInstance(apolloClient)
+    let cardService = CardService.getInstance(apolloClient)
     cardService.getCards(addCards)
-    userService = UserService.getInstance(apolloClient)
+      .then(() => setStatus({ ...status, loading: false }))
+    let userService = UserService.getInstance(apolloClient)
     userService.getUsers(addUsers)
   },[])
 

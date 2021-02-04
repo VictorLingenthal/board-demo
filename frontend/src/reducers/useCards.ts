@@ -6,7 +6,7 @@ export type Card = {
   id: string
   title: string
   status: CardStatus
-  owner: string | null
+  owner: string
   creator: string
   date: Date
 }

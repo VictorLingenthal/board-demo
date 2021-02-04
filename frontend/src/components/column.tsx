@@ -4,16 +4,13 @@ import './scss/column.scss'
 import CardComp from './card'
 import { CardStatus } from '../services/statusService'
 import useCards, { Card, ICardDispatcher} from '../reducers/useCards'
-import { User } from '../reducers/useUsers'
-import { CardService, ICardService } from '../services/cardService'
+import { CardService } from '../services/cardService'
 
 let Column: FC<{
   status:CardStatus
-  users:User[]
 }> = (props) => {
-
-const [cards, { addCard }]:[Card[], ICardDispatcher] = (useCards as any)()
-
+  
+  const [cards, { addCard }]:[Card[], ICardDispatcher] = (useCards as any)()
   let _onClick = () => CardService.getInstance().addCard(addCard, props.status)
 
   return (
@@ -29,7 +26,6 @@ const [cards, { addCard }]:[Card[], ICardDispatcher] = (useCards as any)()
               <CardComp
                 key={cardModel.id}
                 model={cardModel}
-                users={props.users}
               ></CardComp>
         ))}
       </main>

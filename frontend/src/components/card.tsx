@@ -7,14 +7,15 @@ import TextareaAutosize from 'react-textarea-autosize'
 import statusService from '../services/statusService'
 import { CardService, ICardService } from '../services/cardService'
 import useCards, { Card, ICardDispatcher } from '../reducers/useCards'
+import useUsers, { User, IUserDispatcher } from '../reducers/useUsers'
 import capitalize from "../utils/utils"
 
 let CardComp: FC<{
   model:Card
-  users:Object[]
 }> = (props) => {
 
   const [cards, { setStatus, setOwner, setTitle, deleteCard }]:[Card[], ICardDispatcher] = (useCards as any)()
+  const [users]:[User[], IUserDispatcher] = (useUsers as any)()
 
   let [editTitle, setEditTitle] = useState<boolean>(false)
   let [deletePending, setDeletePending] = useState<boolean>(false)
@@ -40,10 +41,11 @@ let CardComp: FC<{
       <header>
         <Select
           className="selectOwner"
-          options={props.users}
+          options={users}
           value={{
             value: props.model.owner,
-            label: capitalize(props.model.owner)
+            label: capitalize(props.model.owner),
+            id: props.model.id
           }}
           placeholder="Owner"
           isClearable={true}

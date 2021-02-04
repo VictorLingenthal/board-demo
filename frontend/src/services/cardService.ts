@@ -9,7 +9,7 @@ type ServerCard = {
   id: string
   title: string
   status: CardStatusValue
-  owner: string | null
+  owner: string
   creator: string
   date: Date
 }
@@ -80,10 +80,7 @@ export class CardService implements ICardService {
           .map(card => this.convertServerCard(card)))
         return true
       })
-      .catch(error => {
-        console.log(error)
-        return false
-      })
+      .catch(error => false)
 
 
   // Adds a new Cards
