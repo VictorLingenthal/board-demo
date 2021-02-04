@@ -2,6 +2,9 @@
 
 A simple Demo of a Trello like Board using NodeJS written with React/Typescript, GraphQL/Apollo and MongoDB.
 
+This Demo can be seen here:
+https://boarddemo.herokuapp.com/
+
 
 ### Prerequisites
 
@@ -41,7 +44,8 @@ which you can find under Clusters/Connect
 
 1) create heroku account
 2) create new heroku app and follow the instructions
-3) `git push heroku graphql:master`
+3) Add the config variable from step 3 Installing in Heroku under Settings.
+4) `git push heroku graphql:master`
 
 
 ## Todos
