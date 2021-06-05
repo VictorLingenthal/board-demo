@@ -1,6 +1,6 @@
 # BoardDemo
 
-A simple Demo of a Canban Board using NodeJS written with React/Typescript, GraphQL/Apollo and MongoDB.
+A simple Demo of a Kanban Board using NodeJS written with React/Typescript, GraphQL/Apollo and MongoDB.
 
 This Demo can be seen here:
 https://boarddemo.herokuapp.com/
